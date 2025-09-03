@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/vijay254452/youtube-clone.git'
+                git branch: 'main', url: 'https://github.com/vijay254452/youtube.git'
             }
         }
 
