@@ -1,4 +1,4 @@
-package com.youtube;   // ⚡ use the same package as your main application
+package com.youtube.clone;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -10,4 +10,6 @@ public class ServletInitializer extends SpringBootServletInitializer {
         return application.sources(YoutubeCloneApplication.class);
     }
 }
+
+
 
