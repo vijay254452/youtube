@@ -1,43 +1,68 @@
 pipeline {
     agent any
+
+    tools {
+        maven "Maven3"
+    }
+
     environment {
-        DOCKER_IMAGE = "vijay3247/youtube-clone:latest"
+        MAVEN_OPTS = "-Dmaven.repo.local=/var/jenkins_home/.m2/repository"
+        DOCKER_IMAGE = "vijay254452/youtube-clone"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/vijay254452/youtube.git'
+                checkout scm
             }
         }
 
         stage('Build WAR') {
+            when {
+                changeset "**/src/**" // Run only if Java source files changed
+            }
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh "mvn clean package -DskipTests"
             }
         }
 
         stage('Build Docker Image') {
+            when {
+                anyOf {
+                    changeset "Dockerfile"
+                    changeset "target/*.war"
+                }
+            }
             steps {
-                sh 'docker build -t ${DOCKER_IMAGE} .'
+                sh "docker build -t ${DOCKER_IMAGE}:latest ."
             }
         }
 
         stage('Push Docker Image') {
+            when {
+                branch 'main'
+            }
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh 'docker push ${DOCKER_IMAGE}'
-                }
+                sh "docker push ${DOCKER_IMAGE}:latest"
             }
         }
 
         stage('Deploy Container') {
+            when {
+                branch 'main'
+            }
             steps {
                 sh '''
                 docker rm -f youtube-clone || true
-                docker run -d --name youtube-clone -p 8090:8080 ${DOCKER_IMAGE}
+                docker run -d --name youtube-clone -p 8080:8080 ${DOCKER_IMAGE}:latest
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished with status: ${currentBuild.currentResult}"
         }
     }
 }
