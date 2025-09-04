@@ -1,21 +1,80 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>YouTube Clone</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-        header { background: red; color: white; padding: 15px; font-size: 24px; }
-        a { text-decoration: none; color: blue; margin-right: 15px; }
-        .content { margin-top: 20px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouTube Clone Home</title>
+  <style>
+    :root { --bg:#0f0f0f; --fg:#f1f1f1; --muted:#aaaaaa; --card:#1a1a1a; }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;
+    background:var(--bg);color:var(--fg)}
+    header{position:sticky;top:0;background:#121212;border-bottom:1px solid #222;padding:.75rem 1rem;display:flex;gap:.75rem;align-items:center}
+    .logo{font-weight:700;letter-spacing:.3px}
+    .search{flex:1;display:flex;gap:.5rem}
+    .search input{width:100%;padding:.6rem .8rem;border:1px solid #333;border-radius:8px;background:#0b0b0b;color:var(--fg)}
+    .search button{padding:.6rem .9rem;border:1px solid #333;border-radius:8px;background:#1f1f1f;color:var(--fg);cursor:pointer}
+    main{padding:1rem;max-width:1200px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+    .card{background:var(--card);border:1px solid #222;border-radius:14px;overflow:hidden}
+    .thumb{aspect-ratio:16/9;background:#222}
+    .meta{padding:.75rem}
+    .title{margin:0 0 .35rem;font-size:.98rem;line-height:1.3}
+    .channel{margin:0;color:var(--muted);font-size:.85rem}
+    footer{padding:2rem 1rem;color:#888;text-align:center}
+  </style>
 </head>
 <body>
-    <header>📺 YouTube Clone</header>
-    <div class="content">
-        <h2>Welcome to YouTube Clone</h2>
-        <p>Click below to explore:</p>
-        <a href="/videos">🎬 View Videos</a>
-    </div>
+<header>
+  <div class="logo">▶ YouTube Clone</div>
+  <form class="search" th:action="@{/search}" method="get">
+    <input name="q" placeholder="Search" />
+    <button type="submit">Search</button>
+  </form>
+</header>
+
+<main>
+  <h2 style="margin:.5rem 0 1rem;">Trending</h2>
+
+  <!-- Example: render videos if your controller adds model attribute "videos" -->
+  <section class="grid" th:if="${videos}" th:remove="tag">
+    <article class="card" th:each="v : ${videos}">
+      <a class="thumb" th:href="@{'/watch'(id=${v.id})}"></a>
+      <div class="meta">
+        <h3 class="title" th:text="${v.title}">Sample title</h3>
+        <p class="channel" th:text="${v.channel}">Channel name</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Fallback placeholder grid if no data passed -->
+  <section class="grid" th:if="${videos == null}">
+    <article class="card">
+      <div class="thumb"></div>
+      <div class="meta">
+        <h3 class="title">Getting Started with Spring Boot</h3>
+        <p class="channel">Spring Academy</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="thumb"></div>
+      <div class="meta">
+        <h3 class="title">Dockerizing Java Apps</h3>
+        <p class="channel">DevOps World</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="thumb"></div>
+      <div class="meta">
+        <h3 class="title">Jenkins CI/CD Pipeline</h3>
+        <p class="channel">Build Masters</p>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer>© <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> YouTube Clone</footer>
 </body>
 </html>
+
+
 
